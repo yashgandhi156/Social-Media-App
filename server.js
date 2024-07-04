@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import { readdirSync } from "fs";
 const morgan = require("morgan");
 // config dotenv file
 require("dotenv").config();
@@ -22,10 +23,9 @@ app.use(cors());
 app.use(morgan("dev"));
 
 //route
-//register
-app.post("/register", (req, res) => {
-  console.log("Register User Details", req.body);
-});
+readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
+
+// app.use("/api", require("./routes/authRoutes"));
 
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to Yash Gandhi</h1>");
