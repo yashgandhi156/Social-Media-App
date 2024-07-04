@@ -63,8 +63,12 @@ const register = () => {
                 id="exampleInputPassword1"
               />
             </div>
-            <select className="form-select" aria-label="Default select example">
-              <option selected>Security Question</option>
+            <select
+              className="form-select"
+              defaultValue={"DEFAULT"}
+              aria-label="Default select example"
+            >
+              <option value="DEFAULT">Security Question</option>
               <option value={1}>Enter You Favourite Food Name ?</option>
               <option value={2}>Enter Your Favourite cricketer ?</option>
               <option value={3}>Enter Your Best Friend Name ?</option>
