@@ -1,23 +1,30 @@
 import React, { useState } from "react";
 import Layout from "./../components/Layout/index";
+import { useRouter } from "next/router";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 const register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [answer, setAnswer] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/api/register", {
+    try {
+      const { data } = await axios.post(`http://localhost:8080/api/register`, {
         name,
         email,
         password,
         answer,
-      })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      });
+      toast.success("User Register Successfully");
+      router.push("/login");
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
   return (
     <Layout>
@@ -25,6 +32,17 @@ const register = () => {
         <div className="col-md-8">
           <h1 className="p-3 text-center">Register Page</h1>
           <form>
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
             <div className="mb-3">
               <label htmlFor="exampleInputName1" className="form-label">
                 Name
