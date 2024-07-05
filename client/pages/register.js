@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import Layout from "./../components/Layout/index";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../context";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import Layout from "./../components/Layout/index";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -9,23 +11,30 @@ const register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-
+  const [state, setState] = useContext(UserContext);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`http://localhost:8080/api/register`, {
-        name,
-        email,
-        password,
-        answer,
-      });
+      setLoading(true);
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API}/register`,
+        {
+          name,
+          email,
+          password,
+          answer,
+        }
+      );
+      setLoading(false);
       toast.success("User Register Successfully");
       router.push("/login");
     } catch (error) {
       toast.error(error.response.data);
     }
   };
+  if (state && state.token) router.push("/");
   return (
     <Layout>
       <div className="row d-flex align-items-center justify-content-center mb-4">
@@ -87,8 +96,8 @@ const register = () => {
               aria-label="Default select example"
             >
               <option value="DEFAULT">Security Question</option>
-              <option value={1}>Enter You Favourite Food Name ?</option>
-              <option value={2}>Enter Your Favourite cricketer ?</option>
+              <option value={1}>Enter You Favrite Food Name ?</option>
+              <option value={2}>Enter Your Favrite Sports ?</option>
               <option value={3}>Enter Your Best Friend Name ?</option>
             </select>
             <div className="mb-3">
@@ -98,17 +107,34 @@ const register = () => {
                 type="text"
                 placeholder="Answer here"
                 className="form-control"
-                id="exampleInputName1"
+                id="exampleInputAnswer1"
                 aria-describedby="nameHelp"
               />
             </div>
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              className="btn btn-primary"
-            >
-              Register
-            </button>
+            <div className="d-flex flex-row">
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className="btn btn-primary btn-lg"
+                disabled={!name || !password || !email || !answer}
+              >
+                {loading ? (
+                  <>
+                    <span>Loading &nbsp;</span>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  </>
+                ) : (
+                  "Register"
+                )}
+              </button>
+              <p className="m-3">
+                Already Registerd ?<Link href="/login">Login !</Link>
+              </p>
+            </div>
           </form>
         </div>
       </div>
